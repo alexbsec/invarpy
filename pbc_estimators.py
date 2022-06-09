@@ -14,7 +14,7 @@ sigma_cs(field1D, estimator_kind=1)                                             
 
 """
 
-__all__ = ['sigma', 'sigma_bias', 'sigma_which_diagonal', 'sigma_bias_which_diagonal', 'finite_geometric_series', 'geometric_series_matrices', 'sigma_cs']
+__all__ = ['sigma', 'sigma_which_diagonal', 'sigma_bias_which_diagonal', 'sigma_bias_which_diagonal', 'sigma_cs']
 
 
 
