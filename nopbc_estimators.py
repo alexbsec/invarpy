@@ -52,12 +52,12 @@ def sigma(field1D, estimator_kind=1):
 
 
     Returns
-    _______
+    -------
     ans : one-dimensional complex ndarray
           Returns the desired kind of the biased sigma estimator, using Fourier space method.
 
     Raises
-    ______
+    ------
     ValueError
         If 'estimator_kind' is not equal to either 1 or 2 (int).
 
