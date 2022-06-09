@@ -282,7 +282,7 @@ def geometric_series_matrices(N):
 
 
 def sigma_cs(field1D, geometric_matrices, estimator_kind=1):
-   """
+    """
 
     Compute the desired kind of the biased sigma estimator, given a field, using configuration space method. 
     
