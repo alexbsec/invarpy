@@ -28,32 +28,24 @@ def sigma(field1D, estimator_kind=1):
                 
     return ans/count
 
-def sigma2_inv_shreded(field1D, bins, nd=1):
-    N = field1D.shape[0]
-    count = np.zeros((bins))
+def sigma2_inv(pspec):
+    N = pspec.shape[0]
+    count = np.zeros((N))
     
-    ans = np.zeros((bins),dtype='complex')
+    ans = np.zeros((N),dtype='complex')
     
-    for i in range(bins):
+    for i in range(N):
         if i == 0:
-            ans[i] = (1/N)*np.sum(sigma2_inv_which_diagonal(field1D, diagonal=0)[0])
+            ans[i] = (1/N)*np.sum(sigma2_inv_which_diagonal(pspec, diagonal=0)[0])
             count[i] = 1
             
-        elif N == bins:
-            ans[i] = (1/(N-i))*np.sum(sigma2_inv_which_diagonal(field1D, diagonal=(i))[0])
-            count[i]=1
-            #if i == 1:
-               # print((sigma2_inv_which_diagonal(flat_field, diagonal=(i))))
         else:
-            for j in range(i,i+nd):
-                
-                ans[i] += (1/(N-(i+j-1)))*np.sum(sigma2_inv_which_diagonal(field1D, diagonal=(i+j-1))[0])
-                count[i]+=1
-
-                
+            ans[i] = (1/(N-i))*np.sum(sigma2_inv_which_diagonal(pspec, diagonal=(i))[0])
+            count[i] = 1
+              
     return ans/count
 
-def sigma1_which_diagonal(field1D,diagonal=0):
+def sigma1_which_diagonal(field1D, diagonal=0):
     N = field1D.shape[0]
     ans = np.zeros((1),dtype='object')
     
