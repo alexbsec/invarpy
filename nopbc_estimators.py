@@ -100,12 +100,12 @@ def sigma_bias(pspec, estimator_kind=1):
                      Must be either 1 (1st kind) or 2 (2nd kind).
 
     Returns
-    _______
+    -------
     ans : one-dimensional complex ndarray
           Returns the bias of the desired sigma estimator kind.
 
     Raises
-    ______
+    ------
     ValueError
         If 'estimator_kind' is not equal to either 1 or 2 (int).
 
@@ -146,7 +146,7 @@ def sigma_which_diagonal(field1D, diagonal=0):
                computed.
 
     Returns
-    _______
+    -------
     ans : One-index object containing a complex ndarray
           Returns the desired diagonal of the covariance matrix of that
           Fourier transformed field input.
@@ -179,7 +179,7 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
                      Must be either 1 (1st kind) or 2 (2nd kind).
 
     Returns
-    _______
+    -------
     ans : One-index object containing a complex ndarray
           Returns the desired diagonal of the bias matrix of that
           Fourier transformed field input
@@ -263,7 +263,7 @@ def geometric_series_matrices(N):
         Corresponds to the cosmological field ndarray length.
 
     Returns
-    _______
+    -------
     geometric_matrices : 3-D complex ndarray
                          The output is a 3-D python array_like type where its idices are represented by all [n, m, l] such that
                          0 <= n <= N, 0 <= m, l <= N - 1.
@@ -298,12 +298,12 @@ def sigma_cs(field1D, geometric_matrices, estimator_kind=1):
                      Must be either 1 (1st kind) or 2 (2nd kind).
 
     Returns
-    _______
+    -------
     ans : one-dimensional complex ndarray
           Returns the desired kind of the biased sigma estimator, using configuration space method.
 
     Raises
-    ______
+    ------
     ValueError
         If 'estimator_kind' is not equal to either 1 or 2 (int).
 
