@@ -36,8 +36,33 @@ from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 
 #   field1D must be a flattened cosmological field in a 1-D ndarray type
 #   estimator_kind takes either 1 or 2, refers to the estimator you want to use to compute non-invariance
-#   outputs the first or second kind estimator for the input field1D.
 def sigma(field1D, estimator_kind=1):
+    """
+
+    Compute the desired kind of the biased sigma estimator, given a field, using Fourier space method. 
+    
+    Parameters
+    ----------
+    field1D : one-dimensiona complex ndarray
+              Input one-dimensional ndarray corresponding 
+              to the cosmological field Fourier transformed.
+    estimator_kind : int, two-choices, default=1
+                     This sets the estimator kind to be computed. 
+                     Must be either 1 (1st kind) or 2 (2nd kind).
+
+
+    Returns
+    _______
+    ans : one-dimensional complex ndarray
+          Returns the desired kind of the biased sigma estimator, using Fourier space method.
+
+    Raises
+    ______
+    ValueError
+        If 'estimator_kind' is not equal to either 1 or 2 (int).
+
+    """
+
     N = field1D.shape[0]
     count = np.zeros((N))
     ans = np.zeros((N),dtype='complex')
@@ -60,10 +85,32 @@ def sigma(field1D, estimator_kind=1):
     return ans/count
 
 
-#   pspec refers to the field power spectrum and must also be flattened into a 1-D ndarray type
-#   method used to compute either 1st or 2nd kind estimator bias given the field power spectrum
-#   outputs the bias for that field given its power spectrum.
 def sigma_bias(pspec, estimator_kind=1):
+    """
+
+    Compute the bias of the desired estimator kind, given the field power spectrum. 
+    
+    Parameters
+    ----------
+    pspec : one-dimensiona ndarray
+            Input one-dimensional ndarray corresponding 
+            to the cosmological field power spectrum.
+    estimator_kind : int, two-choices, default=1
+                     This sets the estimator kind to be computed. 
+                     Must be either 1 (1st kind) or 2 (2nd kind).
+
+    Returns
+    _______
+    ans : one-dimensional complex ndarray
+          Returns the bias of the desired sigma estimator kind.
+
+    Raises
+    ______
+    ValueError
+        If 'estimator_kind' is not equal to either 1 or 2 (int).
+
+    """
+
     N = pspec.shape[0]  
     ans = np.zeros((N),dtype='complex')
 
@@ -83,10 +130,29 @@ def sigma_bias(pspec, estimator_kind=1):
     return ans
 
 
-#   Computes the n-th diagonal cross correlation between the field with itself where n is
-#   the corresponding covariance matrix diagonal
-#   outputs an object containing a N - diagonal shaped ndarray.
 def sigma_which_diagonal(field1D, diagonal=0):
+
+    """
+
+    Compute the diagonal of the covariance matrix of a , given the field power spectrum. 
+    
+    Parameters
+    ----------
+    pspec : one-dimensiona complex ndarray
+            Input one-dimensional ndarray corresponding 
+            to the cosmological field Fourier transformed.
+    diagonal : int, default=0
+               the desired diagonal of the covariance matrix to be
+               computed.
+
+    Returns
+    _______
+    ans : One-index object containing a complex ndarray
+          Returns the desired diagonal of the covariance matrix of that
+          Fourier transformed field input.
+
+    """
+
     N = field1D.shape[0]
     ans = np.zeros((1),dtype='object')
     
@@ -95,9 +161,31 @@ def sigma_which_diagonal(field1D, diagonal=0):
     return ans
 
 
-#   Find the n-th diagonal of the 1st or 2nd kind estimator bias
-#   outputs an object continaing a N - diagona shaped ndarray.
 def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
+    """
+
+    Compute the diagonal of the bias matrix for the desired sigma estimator kind, given the field power spectrum. 
+    
+    Parameters
+    ----------
+    pspec : one-dimensiona complex ndarray
+            Input one-dimensional ndarray corresponding 
+            to the cosmological field Fourier transformed.
+    diagonal : int, default=0
+               the desired diagonal of the bias matrix to be
+               computed.
+    estimator_kind : int, two-choices
+                     This sets the estimator kind to be computed. 
+                     Must be either 1 (1st kind) or 2 (2nd kind).
+
+    Returns
+    _______
+    ans : One-index object containing a complex ndarray
+          Returns the desired diagonal of the bias matrix of that
+          Fourier transformed field input
+
+    """
+
     N = pspec.shape[0]
     ans = np.zeros((1),dtype='object')
     Id = np.identity(N)
@@ -122,10 +210,37 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 #################### Configuration space approach ####################
 ######################################################################
 
-#   Compute a finite geometric series of the following exponential. LaTeX script:
-#   \sum_{p=0}^{N-n-1} e^{-\frac{2* \pi * i * p * (m - l)}{N}}
-#   outputs the result of that sum given the parameters N, n, m and l
+
 def finite_geometric_series(N, n, m, l):
+    """
+
+    Compute the finite  geometric series with bounded by N - n - 1 of the summation term exp(-2 * i * pi * sum_index * (m - l) / N).
+    
+    Parameters
+    ----------
+    N : int > 0
+        Corresponds to the cosmological field ndarray length.
+    n : int <= N
+        Corresponds to haw many diagonals far from the main diagonal
+        you want to truncate the sum.
+    m : int <= N - 1
+        The first field vector mode location.
+    l : int <= N - 1
+        The second field vector mode location.
+
+    Returns
+    _______
+    ans : int
+          The correspondent result of the sum.
+
+    Math
+    ----
+    The equation we are summing can be expressed as:
+
+    Sum[exp(-2 * pi * p * (m - l) / N), from p = 0 to p = N - n -1].
+
+    """
+
     if m == l:
         return N - n
     
@@ -137,10 +252,23 @@ def finite_geometric_series(N, n, m, l):
     return ans
 
 
-#   Loop through variable (n, m, l) of finite_geometric_series method to generate a 3-D ndarray
-#   first index corresponds to n variable, second index corresponds to m variable and third index corresponds to l variable
-#   outputs all geometric matrices for every 0 <= n, m, l <= N - 1.
 def geometric_series_matrices(N):
+    """
+
+    Compute all the possible results of the geometric series function by varying the n, l and m parameters and store the result in ndarray.
+    
+    Parameters
+    ----------
+    N : int > 0
+        Corresponds to the cosmological field ndarray length.
+
+    Returns
+    _______
+    geometric_matrices : 3-D complex ndarray
+                         The output is a 3-D python array_like type where its idices are represented by all [n, m, l] such that
+                         0 <= n <= N, 0 <= m, l <= N - 1.
+
+    """
 
     geometric_matrices = np.zeros((N, N, N), dtype='complex')
     
@@ -153,9 +281,33 @@ def geometric_series_matrices(N):
     return geometric_matrices
 
 
-#   Computes 1st or 2nd kind sigma estimator in configurations space
-#   outputs the desired estimator for that given field.
 def sigma_cs(field1D, geometric_matrices, estimator_kind=1):
+   """
+
+    Compute the desired kind of the biased sigma estimator, given a field, using configuration space method. 
+    
+    Parameters
+    ----------
+    field1D : one-dimensiona complex ndarray
+              Input one-dimensional ndarray corresponding 
+              to the cosmological field Fourier transformed.
+    geometric_matrices : 3-D complex ndarray
+                         The resultant geometric_matrices for a field array with length N
+    estimator_kind : int, two-choices, default=1
+                     This sets the estimator kind to be computed. 
+                     Must be either 1 (1st kind) or 2 (2nd kind).
+
+    Returns
+    _______
+    ans : one-dimensional complex ndarray
+          Returns the desired kind of the biased sigma estimator, using configuration space method.
+
+    Raises
+    ______
+    ValueError
+        If 'estimator_kind' is not equal to either 1 or 2 (int).
+
+    """
 
     N = field1D.shape[0]
     ans = np.zeros((N), dtype='complex')
@@ -186,4 +338,6 @@ def sigma_cs(field1D, geometric_matrices, estimator_kind=1):
 
     
     return ans
+
+
 
