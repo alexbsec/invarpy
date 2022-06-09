@@ -6,59 +6,58 @@ from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 #################### Fourier space approach ####################
 ################################################################
 
-def sigma_shreded(flat_field, bins, nd=1):
-    N = flat_field.shape[0]
+def sigma_shreded(field1D, bins, nd=1):
+    N = field1D.shape[0]
     count = np.zeros((bins))
     ans = np.zeros((bins),dtype='complex')
     
     for i in range(bins):
         if i == 0:
-            ans[i] = (1/N)*np.sum(sigma1_which_diagonal(flat_field, diagonal=0)[0])
+            ans[i] = (1/N)*np.sum(sigma1_which_diagonal(field1D, diagonal=0)[0])
             count[i] = 1
             
         elif N == bins:
-            ans[i] = (1/(N-i))*np.sum(sigma1_which_diagonal(flat_field, diagonal=(i))[0])
+            ans[i] = (1/(N-i))*np.sum(sigma1_which_diagonal(field1D, diagonal=(i))[0])
             count[i]=1 
         else:
             for j in range(i,i+nd):
-                ans[i] += (1/(N-(i+j-1)))*np.sum(sigma1_which_diagonal(flat_field, diagonal=(i+j-1))[0])
+                ans[i] += (1/(N-(i+j-1)))*np.sum(sigma1_which_diagonal(field1D, diagonal=(i+j-1))[0])
                 count[i]+=1
 
                 
     return ans/count
 
-def sigma2_inv_shreded(flat_field, bins, nd=1):
-    N = flat_field.shape[0]
+def sigma2_inv_shreded(field1D, bins, nd=1):
+    N = field1D.shape[0]
     count = np.zeros((bins))
     
     ans = np.zeros((bins),dtype='complex')
     
     for i in range(bins):
         if i == 0:
-            ans[i] = (1/N)*np.sum(sigma2_inv_which_diagonal(flat_field, diagonal=0)[0])
+            ans[i] = (1/N)*np.sum(sigma2_inv_which_diagonal(field1D, diagonal=0)[0])
             count[i] = 1
             
         elif N == bins:
-            ans[i] = (1/(N-i))*np.sum(sigma2_inv_which_diagonal(flat_field, diagonal=(i))[0])
-            #print(i,sigma1_which_diagonal(flat_field, diagonal=(i)), ans[i])
+            ans[i] = (1/(N-i))*np.sum(sigma2_inv_which_diagonal(field1D, diagonal=(i))[0])
             count[i]=1
             #if i == 1:
                # print((sigma2_inv_which_diagonal(flat_field, diagonal=(i))))
         else:
             for j in range(i,i+nd):
                 
-                ans[i] += (1/(N-(i+j-1)))*np.sum(sigma2_inv_which_diagonal(flat_field, diagonal=(i+j-1))[0])
+                ans[i] += (1/(N-(i+j-1)))*np.sum(sigma2_inv_which_diagonal(field1D, diagonal=(i+j-1))[0])
                 count[i]+=1
 
                 
     return ans/count
 
-def sigma1_which_diagonal(box1d,diagonal=0):
-    N = box1d.shape[0]
+def sigma1_which_diagonal(field1D,diagonal=0):
+    N = field1D.shape[0]
     ans = np.zeros((1),dtype='object')
     
-    ans[0] = (1/2)*(box1d[diagonal:]*np.conjugate(box1d[:N-diagonal]) +
-                           np.conjugate(box1d[diagonal:]*np.conjugate(box1d[:N-diagonal])))
+    ans[0] = (1/2)*(field1D[diagonal:]*np.conjugate(field1D[:N-diagonal]) +
+                           np.conjugate(field1D[diagonal:]*np.conjugate(field1D[:N-diagonal])))
     return ans
 
 def sigma2_inv_which_diagonal(pspec, diagonal=0):
