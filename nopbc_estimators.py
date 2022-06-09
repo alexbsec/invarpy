@@ -6,24 +6,19 @@ from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 #################### Fourier space approach ####################
 ################################################################
 
-def sigma_shreded(field1D, bins, nd=1):
+def sigma_shreded(field1D):
     N = field1D.shape[0]
-    count = np.zeros((bins))
-    ans = np.zeros((bins),dtype='complex')
+    count = np.zeros((N))
+    ans = np.zeros((N),dtype='complex')
     
-    for i in range(bins):
+    for i in range(N):
         if i == 0:
             ans[i] = (1/N)*np.sum(sigma1_which_diagonal(field1D, diagonal=0)[0])
             count[i] = 1
-            
-        elif N == bins:
+        
+        else:
             ans[i] = (1/(N-i))*np.sum(sigma1_which_diagonal(field1D, diagonal=(i))[0])
             count[i]=1 
-        else:
-            for j in range(i,i+nd):
-                ans[i] += (1/(N-(i+j-1)))*np.sum(sigma1_which_diagonal(field1D, diagonal=(i+j-1))[0])
-                count[i]+=1
-
                 
     return ans/count
 
