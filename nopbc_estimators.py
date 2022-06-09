@@ -18,7 +18,6 @@ def sigma_shreded(flat_field, bins, nd=1):
             
         elif N == bins:
             ans[i] = (1/(N-i))*np.sum(sigma1_which_diagonal(flat_field, diagonal=(i))[0])
-            ##print(i,sigma1_which_diagonal(flat_field, diagonal=(i)), ans[i])
             count[i]=1 
         else:
             for j in range(i,i+nd):
