@@ -6,10 +6,16 @@ from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 #################### Fourier space approach ####################
 ################################################################
 
-def sigma_shreded(field1D):
+def sigma(field1D, estimator_kind=1):
     N = field1D.shape[0]
     count = np.zeros((N))
     ans = np.zeros((N),dtype='complex')
+
+    if estimator_kind == 2:
+        field1D = np.abs(field1D)**2
+
+    elif estimator_kind != 1 or estimator_kind != 2:
+        raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
     
     for i in range(N):
         if i == 0:
