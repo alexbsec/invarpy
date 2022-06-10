@@ -106,17 +106,17 @@ def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=N
 
     sigma_bd_fn = sigma_which_diagonal
 
+    if assume_invariance == True:
+
+        if type(field1D_spectrum) != numpy.ndarray:
+
+            raise TypeError("Expected field1D_spectrum variable to be " + str(type(field1D.shape)) + " type. Got " + str(type(assume_invariance)) + " type instead.")
+        
+        sigma_bd_fn = sigma_bias_which_diagonal
+        field1D = field1D_spectrum
+
     if estimator_kind == 1:
 
-        if assume_invariance == True:
-
-            if type(field1D_spectrum) != numpy.ndarray:
-
-                raise TypeError("Expected field1D_spectrum variable to be " + str(type(field1D.shape)) + " type. Got " + str(type(assume_invariance)) + " type instead.")
-
-
-            sigma_bd_fn = sigma_bias_which_diagonal
-            field1D = field1D_spectrum
 
         for n in range(N):
 
@@ -128,12 +128,6 @@ def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=N
 
         if assume_invariance == True:
 
-            if type(field1D_spectrum) != numpy.ndarray:
-
-                raise TypeError("Expected field1D_spectrum variable to be " + str(type(field1D.shape)) + " type. Got " + str(type(assume_invariance)) + " type instead.")
-
-
-            sigma_bd_fn = sigma_bias_which_diagonal
             field1D = field1D_spectrum
 
 
@@ -190,6 +184,8 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 
             ans = 0
 
+        return ans/N
+
     
     elif estimator_kind == 2:
 
@@ -203,7 +199,7 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
             ans += pspec[loop] * pspec[loop + diagonal] + (pspec[loop]**2) * (Ide[loop, loop + diagonal])**2 + (pspec[loop]**2) * (Id[loop, loop + diagonal])**2
 
 
-    return ans/N
+        return ans
 
 
   
