@@ -201,6 +201,9 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 
         return ans
 
+    else:
+        ValueError("Invalid estimator kind. Must be either 1 or 2.")
+
 
   
 
