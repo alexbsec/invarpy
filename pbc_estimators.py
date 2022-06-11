@@ -33,7 +33,7 @@ from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 
 
 
-def sigma_which_diagonal(field1D, diagonal=0):
+def sigma_which_diagonal(field1D, diagonal=0, estimator_kind=1):
     """
     Compute, assuming Python's periodic boundary condition, the diagonal of the covariance matrix of a given field. 
     
@@ -50,16 +50,32 @@ def sigma_which_diagonal(field1D, diagonal=0):
     ans : One-index object containing a complex ndarray
           Returns the desired diagonal of the covariance matrix of that
           Fourier transformed field input.
+
+    Raises
+    ------
+    ValueError
+        If 'estimator_kind' is not equal to either 1 or 2 (int).
+
     """
 
     N = field1D.shape[0]
     ans = 0
 
-    for i in range(-diagonal, N - diagonal):
+    if estimator_kind == 1:
 
-        variable = (field1D[i] * np.conjugate(field1D[i + diagonal]))
-        ans += (1/2) * (variable + np.conjugate(variable))
+        for i in range(-diagonal, N - diagonal):
 
+            variable = (field1D[i] * np.conjugate(field1D[i + diagonal]))
+            ans += (1/2) * (variable + np.conjugate(variable))
+
+    elif estimator_kind == 2:
+
+        for i in range(-diagonal, N - diagonal):
+
+            ans += (field1D[i] * np.conjugate(field1D[i + diagonal]))
+
+    else:
+        raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
     return ans/N
 
 
@@ -94,7 +110,7 @@ def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=N
         If 'estimator_kind' is not equal to either 1 or 2 (int).
 
     TypeError
-        if 'assume_invariance' is set to True, but no power spectrum is assigned to field_spectrum variable.
+        if 'assume_invariance' is set to True, but no ndarray power spectrum is assigned to field_spectrum variable.
 
     """
 
@@ -116,7 +132,7 @@ def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=N
         field1D = field1D_spectrum
 
     if estimator_kind == 1:
-
+         
 
         for n in range(N):
 
@@ -164,6 +180,11 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
     ans : One-index object containing a complex ndarray
           Returns the desired diagonal of the covariance matrix of that
           Fourier transformed field input.
+
+    Raises
+    ------
+    ValueError
+        If 'estimator_kind' is not equal to either 1 or 2 (int).
 
     """
 
