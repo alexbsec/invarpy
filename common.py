@@ -45,7 +45,7 @@ def spectrum_estimate(field1D, pixel_size=1, shift_origin=False):
 
 
 
-def split_spectrum(field1D, pixel_size=1, origin_shift=False):
+def split_spectrum(field1D, pixel_size=1, shift_origin=False):
 	"""
 
 	"""
@@ -59,8 +59,8 @@ def split_spectrum(field1D, pixel_size=1, origin_shift=False):
 
 	field_L, field_R = field1D[:n], field1D[n:]
 
-	pspec_L = spectrum_estimate(field_L, pixel_size=pixel_size, origin_shift=origin_shift)
-	pspec_R = spectrum_estimate(field_R, pixel_size=pixel_size, origin_shift=origin_shift)
+	pspec_L = spectrum_estimate(field_L, pixel_size=pixel_size, shift_origin=origin_shift)
+	pspec_R = spectrum_estimate(field_R, pixel_size=pixel_size, shift_origin=origin_shift)
 
 	return pspec_L, pspec_R
 
