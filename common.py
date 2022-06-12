@@ -17,35 +17,31 @@ from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 
 
 
-def spectrum_estimate(field1D, pixel_size=1, shift_origin=False):
+def spectrum_estimate(field1D, shift_origin=False):
 	"""
 
 	"""
-
-	N = field1D.shape[0]
-
-	vol_factor = N * pixel_size
 
 	if shift_origin == True:
 
 		field1D = ifftshift(field1D)
 
-		field_fft = pixel_size * fftshift(fftn(field1D))
+		field_fft = fftshift(fftn(field1D))
 
-		ans = np.abs(field_fft)**2 / vol_factor
+		ans = np.abs(field_fft)**2
 
 	else:
 
-		field_fft = pixel_size * fftn(field1D)
+		field_fft = fftn(field1D)
 
-		ans = np.abs(field_fft)**2 / vol_factor
+		ans = np.abs(field_fft)**2 
 
 	return ans
 
 
 
 
-def split_spectrum(field1D, pixel_size=1, shift_origin=False):
+def split_spectrum(field1D, shift_origin=False):
 	"""
 
 	"""
@@ -59,8 +55,8 @@ def split_spectrum(field1D, pixel_size=1, shift_origin=False):
 
 	field_L, field_R = field1D[:n], field1D[n:]
 
-	pspec_L = spectrum_estimate(field_L, pixel_size=pixel_size, shift_origin=shift_origin)
-	pspec_R = spectrum_estimate(field_R, pixel_size=pixel_size, shift_origin=shift_origin)
+	pspec_L = spectrum_estimate(field_L, shift_origin=shift_origin)
+	pspec_R = spectrum_estimate(field_R, shift_origin=shift_origin)
 
 	return pspec_L, pspec_R
 
