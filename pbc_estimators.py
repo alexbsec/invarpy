@@ -18,8 +18,6 @@ __all__ = ['sigma', 'sigma_which_diagonal', 'sigma_bias_which_diagonal', 'sigma_
 
 
 
-import functools
-
 import numpy as np
 from numpy.fft import fftshift, fftn, ifftshift, fftfreq, ifftn, fft, ifft
 
