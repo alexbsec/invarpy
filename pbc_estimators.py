@@ -14,7 +14,7 @@ sigma_cs(field1D, estimator_kind=1)                                             
 
 """
 
-__all__ = ['sigma', 'sigma_which_diagonal', 'sigma_bias_which_diagonal', 'sigma_cs']
+__all__ = ['sigma', 'sigma_which_diagonal', 'sigma_bias_which_diagonal', 'sigma_cs', 'sigma_bias_which_diagonal_cs']
 
 
 
@@ -39,17 +39,16 @@ def sigma_which_diagonal(field1D, diagonal=0, estimator_kind=1):
     
     Parameters
     ----------
-    pspec : one-dimensiona complex ndarray
+    field1D : one-dimensiona complex ndarray
             Input one-dimensional ndarray corresponding 
             to the cosmological field Fourier transformed.
     diagonal : int, default=0
-               the desired diagonal of the covariance matrix to be
+               the desired diagonal of the field1D covariance matrix to be
                computed.
     Returns
     -------
-    ans : One-index object containing a complex ndarray
-          Returns the desired diagonal of the covariance matrix of that
-          Fourier transformed field input.
+    ans : int
+          Returns the corresponding diagonal of the field1D covariance matrix.
 
     Raises
     ------
@@ -69,6 +68,8 @@ def sigma_which_diagonal(field1D, diagonal=0, estimator_kind=1):
             ans += (1/2) * (variable + np.conjugate(variable))
 
     elif estimator_kind == 2:
+        
+        field1D = np.abs(field1D)**2
 
         for i in range(-diagonal, N - diagonal):
 
@@ -76,10 +77,11 @@ def sigma_which_diagonal(field1D, diagonal=0, estimator_kind=1):
 
     else:
         raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
-    return ans/N
+
+    return ans
 
 
-def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=None):
+def sigma(field1D, estimator_kind=1, assume_invariance=False):
     """
 
     Compute the desired kind of the biased sigma estimator, given a field, using Fourier space method. 
@@ -94,9 +96,6 @@ def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=N
                      Must be either 1 (1st kind) or 2 (2nd kind).
     assume_invariance : bool, default=False
                         If true, compute bias of desired estimator_kind.
-    field_spectrum : One-dimensional real ndarray, default=None
-                     Add this parameter only if you set assume_invariance=true.
-                     Feed it with the field power spectrum.
 
     Returns
     -------
@@ -104,64 +103,32 @@ def sigma(field1D, estimator_kind=1, assume_invariance=False, field1D_spectrum=N
           Returns the desired kind of the biased sigma estimator, using Fourier space method, or
           if assume_invariance=True, returns the bias of that sigma estimator kind.
 
-    Raises
-    ------
-    ValueError
-        If 'estimator_kind' is not equal to either 1 or 2 (int).
-
-    TypeError
-        if 'assume_invariance' is set to True, but no ndarray power spectrum is assigned to field_spectrum variable.
-
     """
-
-    import numpy
     
     N = field1D.shape[0]
-
     ans = np.zeros((N), dtype='complex')
-
+    
     sigma_bd_fn = sigma_which_diagonal
-
+    
     if assume_invariance == True:
-
-        if type(field1D_spectrum) != numpy.ndarray:
-
-            raise TypeError("Expected field1D_spectrum variable to be " + str(type(field1D.shape)) + " type. Got " + str(type(assume_invariance)) + " type instead.")
         
         sigma_bd_fn = sigma_bias_which_diagonal
-        field1D = field1D_spectrum
-
-    if estimator_kind == 1:
-         
-
-        for n in range(N):
-
-            ans[n] = sigma_bd_fn(field1D, diagonal=n)
-
-    elif estimator_kind == 2:
-
-        field1D = np.abs(field1D)**2
-
-        if assume_invariance == True:
-
-            field1D = field1D_spectrum
-
-
-        for n in range(N):
-
-            ans[n] = sigma_bd_fn(field1D, diagonal=n, estimator_kind=2)
-
-    else:
-        raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
-
-    return ans
+                
+    
+    for n in range(N):
+        
+        ans[n] = sigma_bd_fn(field1D, diagonal=n, estimator_kind=estimator_kind)
+    
+    return ans/N
+        
+    
 
 
 def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 
     """
 
-    Compute the diagonal of the bias matrix, given the field power spectrum, using Fourier space method. 
+    Compute, assuming Python's periodic boundary condition, the diagonal of the bias matrix, given the field power spectrum, using Fourier space method. 
     
     Parameters
     ----------
@@ -177,9 +144,9 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 
     Returns
     -------
-    ans : One-index object containing a complex ndarray
-          Returns the desired diagonal of the covariance matrix of that
-          Fourier transformed field input.
+    ans : int
+          Returns the desired diagonal of the bias matrix of the field in
+          Forier space.
 
     Raises
     ------
@@ -205,25 +172,20 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 
             ans = 0
 
-        return ans/N
-
-    
     elif estimator_kind == 2:
 
         for j in range(N):
 
             Ide[:,j] = Id[:,-j]
-
-
+             
         for loop in range(-diagonal, N - diagonal):
 
             ans += pspec[loop] * pspec[loop + diagonal] + (pspec[loop]**2) * (Ide[loop, loop + diagonal])**2 + (pspec[loop]**2) * (Id[loop, loop + diagonal])**2
 
-
-        return ans
-
     else:
-        ValueError("Invalid estimator kind. Must be either 1 or 2.")
+        raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
+
+    return ans
 
 
   
@@ -234,7 +196,7 @@ def sigma_bias_which_diagonal(pspec, diagonal=0, estimator_kind=1):
 
 
 
-def sigma_cs(field1D, estimator_kind=1):
+def sigma_cs(field1D, estimator_kind=1, assume_invariance=False):
 
     """
 
@@ -248,6 +210,8 @@ def sigma_cs(field1D, estimator_kind=1):
     estimator_kind : int, two-choices, default=1
                      This sets the estimator kind to be computed. 
                      Must be either 1 (1st kind) or 2 (2nd kind).
+    assume_invariance : bool, default=False
+                        If true, compute bias of desired estimator_kind.
 
     Returns
     -------
@@ -262,22 +226,116 @@ def sigma_cs(field1D, estimator_kind=1):
     """
 
     N = field1D.shape[0]
+    ans = np.zeros((N), dtype='complex')
+
+    if assume_invariance == True:
+
+        sigma_bd_fn = sigma_bias_which_diagonal_cs
+        
+        
+        if estimator_kind == 1:
+         
+            for n in range(N):
+
+                ans[n] = sigma_bd_fn(field1D, diagonal=n)
+
+        elif estimator_kind == 2:
+
+            for n in range(N):
+
+                ans[n] = sigma_bd_fn(field1D, diagonal=n, estimator_kind=2)
+
+        else:
+            raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
+
+    else:
+
+        if estimator_kind == 1:
+
+            input_field = fftn(field1D**2)
+
+            ans = (1/2) * (input_field + np.conjugate(input_field))
+
+        elif estimator_kind == 2:
+
+            rho_fft = np.abs( fftn(field1D) )**2
+            rho = ifftn(rho_fft)
+            input_field = fftn( rho**2 )
+
+            ans = input_field
+
+        else:
+            raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
+
+    return ans/N
+
+
+
+
+def sigma_bias_which_diagonal_cs(pspec, diagonal=0, estimator_kind=1):
+
+    """
+
+    Compute the diagonal of the bias matrix, given the field power spectrum, using configuration space method. 
+    
+    Parameters
+    ----------
+    pspec : one-dimensiona complex ndarray
+            Input one-dimensional ndarray corresponding 
+            to the cosmological field Fourier transformed.
+    diagonal : int, default=0
+               the desired diagonal of the covariance matrix to be
+               computed.
+    estimator_kind : int, two-choices, default=1
+                     This sets the estimator kind to be computed. 
+                     Must be either 1 (1st kind) or 2 (2nd kind).
+
+    Returns
+    -------
+    ans : int
+          Returns the desired diagonal of the bias matrix of that
+          field in configuration space.
+
+    Raises
+    ------
+    ValueError
+        If 'estimator_kind' is not equal to either 1 or 2 (int).
+
+    """
+
+    N = pspec.shape[0]
+    ans = 0 
+    Id = np.identity(N)
+    Ide = np.zeros((N,N))
 
     if estimator_kind == 1:
 
-        input_field = fftn(field1D**2)
+        if diagonal == 0:
 
-        ans = (1/(2*N)) * (input_field + np.conjugate(input_field))
+            for loop in range(-diagonal, N - diagonal):
 
+                ans += pspec[loop]
+
+        else:
+
+            ans = 0
+
+    
     elif estimator_kind == 2:
 
-        rho_fft = np.abs( fftn(field1D) )**2
-        rho = ifftn(rho_fft)
-        input_field = fftn( rho**2 )
+        for j in range(N):
 
-        ans = (1/N)*input_field
+            Ide[:,j] = Id[:,-j]
+             
+        for loop in range(-diagonal, N - diagonal):
+
+            ans += pspec[loop] * pspec[loop + diagonal] + (pspec[loop]**2) * (Ide[loop, loop + diagonal])**2 + (pspec[loop]**2) * (Id[loop, loop + diagonal])**2
+
 
     else:
         raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
+        
+    return ans/N
 
-    return ans
+
+
