@@ -64,25 +64,19 @@ def sigma(field1D, estimator_kind=1):
     """
 
     N = field1D.shape[0]
-    count = np.zeros((N))
     ans = np.zeros((N),dtype='complex')
 
     if estimator_kind == 2:
         field1D = np.abs(field1D)**2
 
-    elif estimator_kind != 1 or estimator_kind != 2:
+    elif estimator_kind != 1 and estimator_kind != 2:
         raise ValueError("Invalid estimator kind. Must be either 1 or 2.")
     
     for i in range(N):
-        if i == 0:
-            ans[i] = (1/N)*np.sum(sigma_which_diagonal(field1D, diagonal=0)[0])
-            count[i] = 1
-        
-        else:
-            ans[i] = (1/(N-i))*np.sum(sigma_which_diagonal(field1D, diagonal=(i))[0])
-            count[i]=1 
+
+        ans[i] = (1/(N-i))*np.sum(sigma_which_diagonal(field1D, diagonal=(i))[0])
                 
-    return ans/count
+    return ans
 
 
 def sigma_bias(pspec, estimator_kind=1):
