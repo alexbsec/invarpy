@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: invarpy-buschinelli
+Version: 1.0.0
+Summary: Invariance estiators for Python
+Home-page: https://github.com/buschinelli-joao/invarpy
+Author: Joao Buschinelli
+Author-email: joao.correabuschinelli@mail.mcgill.ca
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/pypa/sampleproject/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
+# Invpy package v0.0.1
+
+- Package that includes several methods to compute statistical translation non-invariance of primarly, but not limitted to, scalar
+cosmological fields.
+
+## Packages needed
+
+- To use 'invpy', you will need only 'numpy' as its base package. 
+
+
+
