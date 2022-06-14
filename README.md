@@ -1,11 +1,18 @@
-# invarpy package v1.2.1
+# invarpy package v1.3.0
 
 - Package that includes several methods to compute statistical translation non-invariance of primarly, but not limitted to, scalar
 cosmological fields.
 
-## Updates v1.2.1
+## Updates on v1.3.0
 
-- All methods are working;
+- New method called invarpy.py that calculates the first kind estimator and its bias
+through pbc configuration space method for a three-dimensional field.
+
+## Older versions updates
+
+## Updates on v1.2.1
+
+- All 1D methods are working;
 - Removed unnecessary package functools;
 - Now every method takes the same input. This means that for a configuration space routine, input
 field is the field in configuration space, whereas for a Fourier space routine, input field is
@@ -13,8 +20,6 @@ the Fourier transform of the field in configuration space. For the bias routines
 the field power spectrum not-normalized. The common.py method computes the power spectrum without
 normalizing it. Normalization happens inside the routines of nopbc_estimators or pbc_estimators
 methods.
-
-## Older versions updates
 
 ### Minor Bug fixes on v1.2.0
 
